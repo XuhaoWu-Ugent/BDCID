@@ -31,7 +31,7 @@ def main():
             bdc_class=BroadbandDirectionalCoupler,
             max_gen=30,
             pop_size=20,
-            wavelengths=(1.25, 1.35, 101),
+            wavelengths=(1.28, 1.34, 101),
             center_wavelength=1.31,
             verbose=True,
             plot=True,
@@ -57,7 +57,7 @@ def main():
               f"{solution[9]:.3f},"
               f"{solution[10]:.3f},"
               f"0.38 um")
-        print(f"coupling spacing = {solution[11]:.3f} um")
+        print(f"coupling spacing = 0.2 um")
         print(f"Max-min bar diff: {bar_diff:.3f}")
         print(f"Max-min cross diff: {cross_diff:.3f}")
         print(f"Trans ratio (difference with 0.5): {trans_ratio:.3f}")

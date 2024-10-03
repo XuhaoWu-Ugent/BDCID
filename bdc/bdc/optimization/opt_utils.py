@@ -19,10 +19,10 @@ from pymoo.util.display.display import Display
 # NSGA2
 class BroadbandDirectionalCouplerProblem(Problem):
     def __init__(self, bdc_class, wavelengths, center_wavelength):
-        super().__init__(n_var=12, n_obj=5, n_constr=1,
-                         # wg_length, t_length, t_width_u[1]~t_width_u[9], coupling_spacing
-                         xl=np.array([0.18, 0.18, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.18]),
-                         xu=np.array([2.0, 6.0, 0.76, 0.76, 0.76, 0.76, 0.76, 0.76, 0.76, 0.76, 0.76, 0.6]))
+        super().__init__(n_var=11, n_obj=5, n_constr=1,
+                         # wg_length, t_length, t_width_u[1]~t_width_u[9]
+                         xl=np.array([0.18, 0.18, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38]),
+                         xu=np.array([10.0, 10.0, 0.76, 0.76, 0.76, 0.76, 0.76, 0.76, 0.76, 0.76, 0.76]))
         self.bdc_class = bdc_class
         self.wavelengths = wavelengths
         self.center_wavelength = center_wavelength
@@ -36,7 +36,7 @@ class BroadbandDirectionalCouplerProblem(Problem):
             print(f"Evaluating: {params}")
 
             # Check constraints
-            if params[0] < 0.18 or params[1] < 0.18 or params[11] < 0.18:
+            if params[0] < 0.18 or params[1] < 0.18:
                 g[i] = -1  # Constraint violation
                 continue  # Skip to the next iteration
 
@@ -57,7 +57,7 @@ class BroadbandDirectionalCouplerProblem(Problem):
                 t_width_u=[0.38, params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9],
                            params[10], 0.38],
                 t_width_l=[0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38],
-                coupler_spacing=params[11],
+                coupler_spacing=0.2,
             )
             lv = bdc.Layout()
 
@@ -109,7 +109,7 @@ def optimize_bdc_nsga2(
         bdc_class,
         max_gen=100,
         pop_size=50,
-        wavelengths=(1.25, 1.35, 101),
+        wavelengths=(1.28, 1.34, 101),
         center_wavelength=1.31,
         verbose=True,
         plot=True,
@@ -132,9 +132,11 @@ def optimize_bdc_nsga2(
     class MyCallback:
         def __init__(self) -> None:
             self.data = {
-                "best_trans_up": [],
-                "best_reflection": [],
-                "best_trans_down": []
+                "Best bar difference": [],
+                "Best cross difference": [],
+                "Best trans ratio (difference with 0.5)": [],
+                "Best trans bar (difference with 0.5)": [],
+                "Best reflection": []
             }
 
         def __call__(self, algorithm):
